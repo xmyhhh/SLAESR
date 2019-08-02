@@ -56,6 +56,10 @@ model_2:
 
 
 # Enhance your image
+You can find the pre-training model here.
+https://github.com/One-sixth/SLAESR/releases
+Download model_1.7z and model_2.7z to the source code directory and extract them.
+
 if you want to try model_1  
 push your image in sr_src dir.  
 just run  
