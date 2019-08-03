@@ -28,13 +28,13 @@ opencv-python
 
 # Training Example
 
-model_1:  
+### model_1:  
 64->128  
 ![](https://github.com/One-sixth/SLAESR/blob/master/samples_1/test_32100.jpg)
 128->256, only test output. No train.
 ![](https://github.com/One-sixth/SLAESR/blob/master/samples_1/test_32100_SR.jpg)
 
-model_2:  
+### model_2:  
 64->128  
 ![](https://github.com/One-sixth/SLAESR/blob/master/samples_2/test_41400.jpg)
 128->256, only test output. No train.
@@ -42,17 +42,26 @@ model_2:
 
 # Testing Example
 
-model_1:  
+### origin:  
+![](https://github.com/One-sixth/SLAESR/blob/master/sr_src/1.png)
+![](https://github.com/One-sixth/SLAESR/blob/master/sr_src/2.png)
+![](https://github.com/One-sixth/SLAESR/blob/master/sr_src/3.png)  
+![](https://github.com/One-sixth/SLAESR/blob/master/sr_src/%E3%81%95%E3%82%88%E3%81%AA%E3%82%89%E3%81%AE%E6%9C%9D%E3%81%AB%E7%B4%84%E6%9D%9F%E3%81%AE%E8%8A%B1%E3%82%92%E3%81%8B%E3%81%96%E3%82%8D%E3%81%86.jpg)  
+![](https://github.com/One-sixth/SLAESR/blob/master/sr_src/%E5%B0%86%E6%89%80%E6%9C%89%E7%9A%84%E6%AD%8C%E7%8C%AE%E7%BB%99%E6%9C%AA%E6%9D%A5%E7%9A%84%E4%BD%A0.png)
+
+### model_1:  
 ![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_1/1.png)
 ![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_1/2.png)
 ![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_1/3.png)  
-![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_1/%E5%B0%86%E6%89%80%E6%9C%89%E7%9A%84%E6%AD%8C%E7%8C%AE%E7%BB%99%E6%9C%AA%E6%9D%A5%E7%9A%84%E4%BD%A0.png)
+![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_1/%E3%81%95%E3%82%88%E3%81%AA%E3%82%89%E3%81%AE%E6%9C%9D%E3%81%AB%E7%B4%84%E6%9D%9F%E3%81%AE%E8%8A%B1%E3%82%92%E3%81%8B%E3%81%96%E3%82%8D%E3%81%86.jpg)  
+![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_1/%E5%B0%86%E6%89%80%E6%9C%89%E7%9A%84%E6%AD%8C%E7%8C%AE%E7%BB%99%E6%9C%AA%E6%9D%A5%E7%9A%84%E4%BD%A0.png)  
 
-model_2:  
+### model_2:  
 ![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_2/1.png)
 ![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_2/2.png)
 ![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_2/3.png)  
-![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_2/%E5%B0%86%E6%89%80%E6%9C%89%E7%9A%84%E6%AD%8C%E7%8C%AE%E7%BB%99%E6%9C%AA%E6%9D%A5%E7%9A%84%E4%BD%A0.png)
+![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_2/%E3%81%95%E3%82%88%E3%81%AA%E3%82%89%E3%81%AE%E6%9C%9D%E3%81%AB%E7%B4%84%E6%9D%9F%E3%81%AE%E8%8A%B1%E3%82%92%E3%81%8B%E3%81%96%E3%82%8D%E3%81%86.jpg)  
+![](https://github.com/One-sixth/SLAESR/blob/master/sr_dst_2/%E5%B0%86%E6%89%80%E6%9C%89%E7%9A%84%E6%AD%8C%E7%8C%AE%E7%BB%99%E6%9C%AA%E6%9D%A5%E7%9A%84%E4%BD%A0.png)  
 
 
 # Enhance your image
