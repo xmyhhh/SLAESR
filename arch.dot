@@ -1,0 +1,143 @@
+digraph arch {
+
+    nodesep=0.5 // increases the separation between nodes
+    # graph [rankdir=LR]
+
+    node [color=Red,fontname=Courier,shape=box] //All nodes will this shape and colour
+    edge [color=Blue] //All the lines look like this
+    
+    comment_block [label="c=channel\lk=kernel_size\ls=stride\la=act\l"]
+    // \l mean left align
+
+    lr_input [label="lr_input Nx3x128x128"]
+    enc_in [label="conv c=64 k=1 s=1"]
+    enc_b1 [label="enc_block c=64 s=1"]
+    enc_b2 [label="enc_block c=128 s=2"]
+    enc_b3 [label="enc_block c=256 s=2"]
+    enc_b4 [label="enc_block c=256 s=2"]
+    
+    enc_edge1 [label="conv_bn_act c=32 k=3 s=1 a=swish"]
+    enc_edge2 [label="conv_act c=1 k=3 s=1 a=tanh"]
+    
+    enc_color1 [label="conv_bn_act c=256 k=3 s=1 a=swish"]
+    enc_color2 [label="conv_act c=64 k=3 s=1 a=tanh"]
+    
+    lr_input -> enc_in
+    
+    subgraph cluster_sub1 {
+        label = "encoder"
+        # labelloc = "t"
+        rankdir = "TB"
+        
+        subgraph cluster_sub1_sub1 {
+            label = "main_path"
+            enc_in -> enc_b1 -> enc_b2 -> enc_b3 -> enc_b4 -> enc_color1 -> enc_color2
+        }
+        subgraph cluster_sub1_sub2 {
+            label = "edge_path"
+            enc_b1 -> enc_edge1 -> enc_edge2
+        }
+    }
+
+    
+    dec_edge1 [label="conv_bn_act c=32 k=3 s=1 a=swish"]
+    dec_edge2 [label="conv_bn_act c=64 k=3 s=1 a=swish"]
+    dec_edge3 [label="conv_bn_act_blur c=128 k=3 s=2 a=swish"]
+    dec_edge4 [label="conv_bn_act_blur c=256 k=3 s=2 a=swish"]
+    dec_edge5 [label="conv_bn_act_blur c=256 k=3 s=2 a=swish"]
+    
+    dec_color1 [label="conv_bn_act c=256 k=3 s=1 a=swish"]
+    dec_color2 [label="conv_bn_act c=256 k=3 s=1 a=swish"]
+    
+    dec_b1 [label="dec_block c=256 s=2"]
+    dec_b2 [label="dec_block c=128 s=2"]
+    dec_b3 [label="dec_block c=64 s=2"]
+    dec_b4 [label="dec_block c=32 s=2"]
+    
+    dec_out [label="conv_act c=3 k=1 s=1 a=tanh"]
+    
+    hr_output [label="hr_output Nx3x256x256"]
+    
+    dec_add_node1 [label="+", shape=circle]
+    dec_add_node2 [label="+", shape=circle]
+    dec_add_node3 [label="+", shape=circle]
+    dec_add_node4 [label="+", shape=circle]
+    
+    subgraph cluster_sub2 {
+        label = "decoder"
+
+        dec_edge5 -> dec_add_node1
+        dec_edge4 -> dec_add_node2
+        dec_edge3 -> dec_add_node3
+        dec_edge2 -> dec_add_node4
+        
+        subgraph cluster_sub2_sub1 {
+            label = "main_path"
+            enc_color2 -> dec_color1 -> dec_color2
+            dec_color2 -> dec_add_node1 -> dec_b1 -> dec_add_node2 -> dec_b2 -> dec_add_node3 -> dec_b3 -> dec_add_node4 -> dec_b4
+            dec_b4 -> dec_out
+        }
+        subgraph cluster_sub2_sub2 {
+            label = "edge_path"
+            enc_edge2 -> dec_edge1 -> dec_edge2 -> dec_edge3 -> dec_edge4 -> dec_edge5
+        }
+    }
+    
+    dec_out -> hr_output
+    
+    # enc block
+    subgraph cluster_enc_block_s2 {
+        label="enc_block s=2"
+        enc_block_s2_tensor_in [label="tensor_in NxCxHxW"]
+        enc_block_s2_skip1 [label="conv_blur c=C*2 k=2 s=2"]
+        enc_block_s2_conv1 [label="conv_bn_act_blur c=C*2 k=3 s=2 a=swish"]
+        enc_block_s2_conv2 [label="conv_bn_act c=C*2 k=3 s=1 a=swish"]
+        enc_block_s2_tensor_out [label="tensor_out NxC*2xH/2xW/2"]
+        
+        enc_block_s2_tensor_in -> {enc_block_s2_skip1, enc_block_s2_conv1}
+        enc_block_s2_skip1 -> enc_block_s2_tensor_out
+        enc_block_s2_conv1 -> enc_block_s2_conv2 -> enc_block_s2_tensor_out
+    }
+    
+    subgraph cluster_enc_block_s1 {
+        label="enc_block s=1"
+        enc_block_s1_tensor_in [label="tensor_in NxCxHxW"]
+        enc_block_s1_conv1 [label="conv_bn_act c=C*2 k=3 s=1 a=swish"]
+        enc_block_s1_conv2 [label="conv_bn_act c=C*2 k=3 s=1 a=swish"]
+        enc_block_s1_tensor_out [label="tensor_out NxCxHxW"]
+        
+        enc_block_s1_tensor_in -> enc_block_s1_tensor_out
+        enc_block_s1_tensor_in -> enc_block_s1_conv1
+        enc_block_s1_conv1 -> enc_block_s1_conv2 -> enc_block_s1_tensor_out
+    }
+    
+    # dec block
+    subgraph cluster_dec_block_s2_type1 {
+        label="dec_block_type1 s=2"
+        dec_block_s2_t1_tensor_in [label="tensor_in NxCxHxW"]
+        dec_block_s2_t1_skip1 [label="deconv c=C/2 k=2 s=2"]
+        dec_block_s2_t1_conv1 [label="deconv_bn_act c=C/2 k=2 s=2 a=swish"]
+        dec_block_s2_t1_conv2 [label="conv_bn_act c=C/2 k=3 s=1 a=swish"]
+        dec_block_s2_t1_tensor_out [label="tensor_out NxC/2xH*2xW*2"]
+        
+        dec_block_s2_t1_tensor_in -> {dec_block_s2_t1_skip1, dec_block_s2_t1_conv1}
+        dec_block_s2_t1_skip1 -> dec_block_s2_t1_tensor_out
+        dec_block_s2_t1_conv1 -> dec_block_s2_t1_conv2 -> dec_block_s2_t1_tensor_out
+    }
+    
+    subgraph cluster_dec_block_s2_type2 {
+        label="dec_block_type2 s=2"
+        dec_block_s2_t2_tensor_in [label="tensor_in NxCxHxW"]
+        dec_block_s2_t2_skip1 [label="conv c=C/2 k=3 s=1"]
+        dec_block_s2_t2_skip2 [label="upsample bilinear 2x"]
+        dec_block_s2_t2_conv1 [label="conv_bn_act c=C/2 k=3 s=1 a=swish"]
+        dec_block_s2_t2_up1 [label="upsample bilinear 2x"]
+        dec_block_s2_t2_conv2 [label="conv_bn_act c=C/2 k=3 s=1 a=swish"]
+        dec_block_s2_t2_tensor_out [label="tensor_out NxC/2xH*2xW*2"]
+        
+        dec_block_s2_t2_tensor_in -> {dec_block_s2_t2_skip1, dec_block_s2_t2_conv1}
+        dec_block_s2_t2_skip1 -> dec_block_s2_t2_skip2 -> dec_block_s2_t2_tensor_out
+        dec_block_s2_t2_conv1 -> dec_block_s2_t2_up1 -> dec_block_s2_t2_conv2 -> dec_block_s2_t2_tensor_out
+    }
+    
+}
