@@ -107,4 +107,4 @@ Then the training will be start.
 Model 2 operations are similar to the above.  
 
 # Network Architecture
-wait to add...  
+![](https://github.com/One-sixth/SLAESR/blob/master/arch.svg)
